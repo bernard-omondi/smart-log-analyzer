@@ -1,7 +1,9 @@
 import re
 from datetime import datetime
+import sys
 
-# The regex – don't panic, I'll explain each piece
+# Apache combined log format
+# Example: 127.0.0.1 - frank [10/Oct/2000:13:55:36 -0700] "GET /apache_pb.gif HTTP/1.0" 200 2326
 LOG_PATTERN = re.compile(
     r'(?P<ip>\S+) \S+ \S+ \[(?P<timestamp>[^\]]+)\] '
     r'"(?P<method>\S+) (?P<url>\S+) \S+" '
@@ -45,14 +47,12 @@ def read_logs(filepath):
                 yield parsed
             else:
                 # Print error to stderr (won't affect output)
-                import sys
                 print(f"Failed to parse: {line[:50]}...", file=sys.stderr)
 
 # If run directly, test it
 if __name__ == '__main__':
-    import sys
     if len(sys.argv) > 1:
         for entry in read_logs(sys.argv[1]):
             print(entry)
     else:
-        print("Usage: python parser.py sample.log")
+        print("Usage: python -m src.parser sample.log")
