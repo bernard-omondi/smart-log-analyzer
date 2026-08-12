@@ -25,7 +25,8 @@ def create_table():
             method TEXT NOT NULL,
             url TEXT NOT NULL,
             status INTEGER NOT NULL,
-            size INTEGER
+            size INTEGER,
+            UNIQUE(ip, timestamp_utc, method, url, status)  -- ← NEW: Prevents duplicates
         )
     """)
     
@@ -46,32 +47,49 @@ def insert_logs(logs: List[Dict]) -> int:
         logs: List of parsed log dictionaries
     
     Returns:
-        Number of rows inserted
+        Number of rows inserted (not duplicates)
     """
+    if not logs:
+        return 0
+    
     conn = get_connection()
     cursor = conn.cursor()
     
+    inserted = 0
+    skipped = 0
+    
     for log in logs:
-        cursor.execute("""
-            INSERT INTO logs (
-                ip, timestamp_utc, timestamp_local, timezone_offset,
-                method, url, status, size
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        """, (
-            log['ip'],
-            log['timestamp_utc'].isoformat(),
-            log['timestamp_local'].isoformat(),
-            log['timezone_offset'],
-            log['method'],
-            log['url'],
-            log['status'],
-            log['size']
-        ))
+        try:
+            cursor.execute("""
+                INSERT OR IGNORE INTO logs (
+                    ip, timestamp_utc, timestamp_local, timezone_offset,
+                    method, url, status, size
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
+                log['ip'],
+                log['timestamp_utc'].isoformat(),
+                log['timestamp_local'].isoformat(),
+                log['timezone_offset'],
+                log['method'],
+                log['url'],
+                log['status'],
+                log['size']
+            ))
+            if cursor.rowcount == 1:
+                inserted += 1
+            else:
+                skipped += 1
+        except Exception as e:
+            print(f"⚠️ Error inserting log: {e}")
+            continue
     
     conn.commit()
-    rows_inserted = len(logs)
     conn.close()
-    return rows_inserted
+    
+    if skipped > 0:
+        print(f"⚠️ Skipped {skipped} duplicate log entries")
+    
+    return inserted
 
 def query_top_ips(limit: int = 5) -> List[Dict]:
     """Get top IPs by request count."""
