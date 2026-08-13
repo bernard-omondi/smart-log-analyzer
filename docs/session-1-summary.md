@@ -1,5 +1,4 @@
-TODAY'S MASTER'S SUMMARY (End of Day 1 – Week 0 Reset)
-📘 MASTER'S SUMMARY – SESSION 1
+📘 TODAY'S SUMMARY – SESSION 1
 
 Date: 2026-08-08
 Apprentice: Bernard Omondi
@@ -27,6 +26,7 @@ pyproject.toml	Modern Python package configuration (replaces requirements.txt)
 README.md	Project documentation for GitHub
 src/	Source code folder (production code lives here)
 tests/	Test files folder
+
 2. COMMANDS YOU RAN (With Flags Explained)
 Command	Meaning	When to use
 ls -la	List all files with long format	Check file permissions, sizes, and hidden files
@@ -42,6 +42,7 @@ Flag	Full Meaning	Why it exists
 -r	Recursive	Operates on folders + all contents
 -f	Force	Suppresses errors, doesn't ask for confirmation
 -p	Parents	Creates parent directories if they don't exist
+
 3. PERMISSIONS DECODED
 
 Output: drwxr-xr-x@
@@ -63,6 +64,7 @@ d  rwx  r-x  r-x
 └─────────────── Directory
 
 For a file: -rw-r--r-- = Owner can read/write, others can only read.
+
 4. WHY THIS MATTERS (Production Context)
 What you used to do	What you do now	Why it's better
 pip install randomly	Define dependencies in pyproject.toml	Reproducible environments
@@ -71,7 +73,8 @@ No type checking	mypy integrated	Catches bugs before runtime
 No code formatting	black + ruff	Consistent style across teams
 
 Real-world impact: When you join a team, they expect this structure. If they see random files in root, they know you're a junior. If they see src/, tests/, pyproject.toml—they know you've been trained.
-5. YOUR QUESTIONS & MY ANSWERS
+
+5. QUESTIONS & ANSWERS
 
 Q: Why -rf for deleting venv?
 A: -r = recursive (delete folder + contents). -f = force (don't ask permission, ignore errors). Without -f, if venv doesn't exist, you'd get an error. With -f, it silently moves on.
@@ -81,17 +84,9 @@ A: Python bytecode cache. Speeds up imports but safe to delete. Often ignored in
 
 Q: Why move parser.py to src/?
 A: In professional projects, src/ holds production code. Tests go in tests/. This separation prevents import confusion and keeps things organized.
-6. NEXT STEPS (Tomorrow)
 
-    Create pyproject.toml – Define your package
 
-    Create README.md – Document the project
-
-    Commit and push – Save the structure to GitHub
-
-    Verify with pytest – Run tests in the new structure
-
-7. CHEAT SHEET (Save This)
+6. CHEAT SHEET (Save This)
 bash
 
 # Navigate
@@ -119,8 +114,8 @@ git add .  # Stage everything
 git commit -m "message"  # Commit
 git push  # Push to GitHub
 
-8. MASTER'S FINAL NOTE
+7. FINAL NOTE
 
-    "You don't just write code—you structure it. The structure is what makes it maintainable, shareable, and deployable. Today, you built the skeleton of a professional project. Tomorrow, we fill it with muscle."
+    "You don't just write code—you structure it. The structure is what makes it maintainable, shareable, and deployable."
 
 

@@ -1,9 +1,9 @@
-# 📘 MASTER'S SUMMARY – SESSION 5
+# 📘 SUMMARY – SESSION 5
 
-**Date:** 2026-08-11  
-**Apprentice:** Bernard Omondi  
-**Stage:** Week 1 – Core Python Mastery (Database Integration)  
-**Status:** ✅ COMPLETED
+Date: 2026-08-11  
+Apprentice: Bernard Omondi  
+Stage: Week 1 – Core Python Mastery (Database Integration)  
+Status: ✅ COMPLETED
 
 ---
 
@@ -76,7 +76,7 @@ What it does:
 
     Converts each line into a Python dictionary using regex
 
-Code you wrote:
+Using this code:
 python
 
 def parse_line(line: str) -> dict:

@@ -1,9 +1,9 @@
-# 📘 MASTER'S SUMMARY – SESSION 3
+# 📘 TODAY'S SUMMARY – SESSION 3
 
-**Date:** 2026-08-11  
-**Apprentice:** Bernard Omondi  
-**Stage:** Week 1 – Core Python Mastery (Parser Fix)  
-**Status:** ✅ COMPLETED
+Date: 2026-08-11  
+Apprentice: Bernard Omondi  
+Stage: Week 1 – Core Python Mastery (Parser Fix)  
+Status: ✅ COMPLETED
 
 ---
 
@@ -56,9 +56,10 @@ text
 {'ip': '10.0.2', 'timestamp': datetime.datetime(2022, 1, 1, 0, 0, 1), 'method': 'GET', 'url': '/dashboard', 'status': 200, 'size': 4096}
 {'ip': '203.0.113.5', 'timestamp': datetime.datetime(2023, 3, 15, 22, 15, 30), 'method': 'DELETE', 'url': '/user/123', 'status': 403, 'size': 128}
 {'ip': '198.51.100.7', 'timestamp': datetime.datetime(2024, 6, 30, 18, 30, 22), 'method': 'GET', 'url': '/report.pdf', 'status': 404, 'size': None}
+```
 
 5. KEY LEARNINGS
-Concept	What you learned
+Concept learned
 Regex	Named groups (?P<name>...) capture specific fields
 Indentation	Python requires consistent indentation—4 spaces is standard
 Slicing	line[:50] gets first 50 characters, line[50] gets character at position 50
