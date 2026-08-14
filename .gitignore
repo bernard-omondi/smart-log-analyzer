@@ -1,4 +1,16 @@
 venv/
 __pycache__/
+*.pyc
 *.db
+*.sqlite
 *.log
+large_*.log
+.env
+.vscode/
+.idea/
+large_sample.log
+*.png
+*.jpg
+*.pdf
+*.svg
+visualizations/
