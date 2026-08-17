@@ -168,11 +168,11 @@ Each Python file—line-by-line dissection:
 ## 📘 CODE DEEP-DIVE: pyproject.toml
 
 ```toml
-**[build-system]**
+[build-system]
 requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
-**[project]**
+[project]
 name = "smart-log-analyzer"
 version = "0.1.0"
 description = "Production-grade log parser with timezone handling"
@@ -197,16 +197,16 @@ dev = [
     "pytest-cov>=4.0.0",
 ]
 
-**[tool.black]**
+[tool.black]
 line-length = 88
 target-version = ['py39', 'py310']
 
-**[tool.ruff]**
+[tool.ruff]
 line-length = 88
 select = ["E", "F", "I", "N", "W"]
 ignore = ["E501"]
 
-**[tool.mypy]**
+[tool.mypy]
 python_version = "3.9"
 warn_return_any = true
 warn_unused_configs = true
@@ -215,11 +215,12 @@ warn_unused_configs = true
 
 ### SECTION 1: [build-system] – HOW TO BUILD YOUR PACKAGE
 
-toml
+```toml
 
-**[build-system]**
+[build-system]
 requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
+```
 
 | Field | Value	| Meaning |
 |-------|-------|---------|
