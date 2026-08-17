@@ -189,7 +189,7 @@ dependencies = [
     "pandas>=2.0.0",
 ]
 
-**[project.optional-dependencies]**
+[project.optional-dependencies]
 dev = [
     "black>=23.0.0",
     "ruff>=0.1.0",
