@@ -1,0 +1,14 @@
+venv/
+__pycache__/
+*.pyc
+*.log
+*.db
+visualizations/
+.git/
+.gitignore
+.dockerignore
+Dockerfile
+*.png
+*.jpg
+*.md
+!README.md
