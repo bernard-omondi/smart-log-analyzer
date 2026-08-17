@@ -169,10 +169,12 @@ Each Python file—line-by-line dissection:
 toml
 
 **[build-system]**
+
 requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 **[project]**
+
 name = "smart-log-analyzer"
 version = "0.1.0"
 description = "Production-grade log parser with timezone handling"
