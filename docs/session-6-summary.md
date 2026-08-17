@@ -62,16 +62,17 @@ What We Did
     Reported skipped entries to the user
 
 Key Code Changes
-python
 
-#### In db.py - CREATE TABLE
+```python
+# In db.py - CREATE TABLE
 CREATE TABLE IF NOT EXISTS logs (
     ...,
     UNIQUE(ip, timestamp_utc, method, url, status)  -- ← Prevents duplicates
 )
 
-#### In db.py - INSERT
+# In db.py - INSERT
 INSERT OR IGNORE INTO logs (...) VALUES (...)
+```
 
 **Key Learnings**
 | Concept |	What You Learned |
@@ -166,15 +167,12 @@ Each Python file—line-by-line dissection:
 
 ## 📘 CODE DEEP-DIVE: pyproject.toml
 
-toml
-
+```toml
 **[build-system]**
-
 requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 **[project]**
-
 name = "smart-log-analyzer"
 version = "0.1.0"
 description = "Production-grade log parser with timezone handling"
@@ -212,6 +210,8 @@ ignore = ["E501"]
 python_version = "3.9"
 warn_return_any = true
 warn_unused_configs = true
+```
+
 
 ### SECTION 1: [build-system] – HOW TO BUILD YOUR PACKAGE
 
@@ -239,8 +239,8 @@ What this does:
 **Analogy:** This is like saying "To build this house, you need a hammer (setuptools) and nails (wheel)."
 
 ### SECTION 2: [project] – WHAT YOUR PACKAGE IS
-toml
 
+```toml
 [project]
 name = "smart-log-analyzer"
 version = "0.1.0"
@@ -252,6 +252,7 @@ authors = [
 license = {text = "MIT"}
 requires-python = ">=3.9"
 dependencies = [...]
+```
 
 **Field Breakdown**
 | Field | Value	| Meaning |
@@ -268,14 +269,15 @@ dependencies = [...]
 ---
 
 **Dependencies Deep-Dive*
-toml
-
+```toml
 dependencies = [
     "pytest>=7.0.0",
     "matplotlib>=3.7.0",
     "seaborn>=0.12.0",
     "pandas>=2.0.0",
 ]
+
+```
 
 | Package |	Version	| Purpose |
 |---------|---------|---------|
@@ -290,8 +292,7 @@ dependencies = [
 
 ### SECTION 3: [project.optional-dependencies] – DEV DEPENDENCIES
 
-toml
-
+```toml
 **[project.optional-dependencies]**
 dev = [
     "black>=23.0.0",
@@ -299,7 +300,7 @@ dev = [
     "mypy>=1.0.0",
     "pytest-cov>=4.0.0",
 ]
-
+```
 | Package |	Purpose |
 |---------|---------|
 | black	| **Code formatter** – auto-formats your code to be consistent |
@@ -319,11 +320,11 @@ Why optional-dependencies?
 
 ### SECTION 4: [tool.black] – CODE FORMATTING CONFIG
 
-toml
-
+```toml
 [tool.black]
 line-length = 88
 target-version = ['py39', 'py310']
+```
 
 | Setting |	Value |	Meaning |
 |---------|-------|---------|
@@ -344,12 +345,12 @@ Why 88? Black's opinionated default—they believe it's the perfect balance betw
 
 ### SECTION 5: [tool.ruff] – LINTING CONFIG
 
-toml
-
+```toml
 [tool.ruff]
 line-length = 88
 select = ["E", "F", "I", "N", "W"]
 ignore = ["E501"]
+```
 
 | Setting |	Value |	Meaning |
 |---------|-------|---------|
@@ -374,12 +375,12 @@ ignore = ["E501"]
 
 ### SECTION 6: [tool.mypy] – TYPE CHECKING CONFIG
 
-toml
-
+```toml
 [tool.mypy]
 python_version = "3.9"
 warn_return_any = true
 warn_unused_configs = true
+```
 
 | Setting |	Value |	Meaning |
 |---------|-------|---------|
@@ -399,17 +400,18 @@ What this does:
 
 **Example:**
 
-python
+```python
 
-#### This would trigger a warning:
+# This would trigger a warning:
 def get_data():  # No return type
     return "hello"
 
-#### This is correct:
+# This is correct:
 def get_data() -> str:  # ✅ Type declared
     return "hello"
+```
 
-COMPLETE ANATOMY DIAGRAM
+#### COMPLETE ANATOMY DIAGRAM
 
 text
 
@@ -464,12 +466,11 @@ text
 ---
 
 ## 📘 CODE DEEP-DIVE: parser.py
-python
-
+```python
 import re
 from datetime import datetime, timezone, timedelta
 import sys
-
+```
 | Line | What it does |	Why |
 |------|--------------|-----|
 | import re | Imports the regular expression module | For parsing log lines with patterns |
@@ -478,14 +479,14 @@ import sys
 
 ---
 
-python
+```python
 
 LOG_PATTERN = re.compile(
     r'(?P<ip>\S+) \S+ \S+ \[(?P<timestamp>[^\]]+)\] '
     r'"(?P<method>\S+) (?P<url>\S+) \S+" '
     r'(?P<status>\d{3}) (?P<size>\S+)'
 )
-
+```
 | Part | What it captures | Example |
 |------|------------------|---------|
 | (?P<ip>\S+) |	IP address (non-space chars) | 127.0.0.1 |
@@ -500,14 +501,14 @@ LOG_PATTERN = re.compile(
 
 ---
 
-python
+```python
 
 def parse_line(line: str):
     match = LOG_PATTERN.match(line)
     if not match:
         return None
     data = match.groupdict()
-
+```
 | Line | What it does |
 |------|--------------|
 | def parse_line(line: str): |	Function that takes a string, returns a dict |
@@ -518,13 +519,13 @@ def parse_line(line: str):
 
 ---
 
-python
+```python
 
     time_str = data['timestamp']
     parts = time_str.rsplit(' ', 1)
     dt_part = parts[0]  # "10/Oct/2000:13:55:36"
     tz_part = parts[1] if len(parts) > 1 else "+0000"
-
+```
 | Line | What it does |
 |------|--------------|
 | time_str = data['timestamp'] | Gets timestamp: "10/Oct/2000:13:55:36 -0700" |
@@ -534,9 +535,10 @@ python
 
 ---
 
-python
+```python
 
     dt_naive = datetime.strptime(dt_part, '%d/%b/%Y:%H:%M:%S')
+```
 
 | Directive | Meaning |	Example |
 |-----------|---------|---------|
@@ -549,7 +551,7 @@ python
 
 ---
 
-python
+```python
 
     sign = tz_part[0]  # '+' or '-'
     hours = int(tz_part[1:3])
@@ -557,7 +559,7 @@ python
     offset_seconds = (hours * 3600 + minutes * 60)
     if sign == '-':
         offset_seconds = -offset_seconds
-
+```
 | Line | What it does | Example |
 |------|--------------|---------|
 | sign = tz_part[0]	| Gets the plus or minus | - |
@@ -568,12 +570,12 @@ python
 
 ---
 
-python
+```python
 
     tz = timezone(timedelta(seconds=offset_seconds))
     dt_local = dt_naive.replace(tzinfo=tz)
     dt_utc = dt_local.astimezone(timezone.utc)
-
+```
 | Line | What it does |
 |------|--------------|
 | tz = timezone(timedelta(seconds=offset_seconds)) | Creates a timezone object from offset |
@@ -582,13 +584,13 @@ python
 
 ---
 
-python
+```python
 
     data['timestamp_local'] = dt_local
     data['timestamp_utc'] = dt_utc
     data['timezone_offset'] = tz_part
     data['timestamp'] = dt_utc
-
+```
 | Line | What it does |
 |------|--------------|
 | data['timestamp_local'] = dt_local | Original timestamp with offset |
@@ -598,13 +600,13 @@ python
 
 ---
 
-python
+```python
 
     data['status'] = int(data['status'])
     size = data['size']
     data['size'] = int(size) if size != '-' else None
     return data
-
+```
 | Line | What it does |
 |------|--------------|
 | data['status'] = int(data['status']) | Converts status to integer |
@@ -614,7 +616,7 @@ python
 
 ---
 
-python
+```python
 
 def read_logs(filepath: str):
     with open(filepath, 'r') as f:
@@ -627,7 +629,7 @@ def read_logs(filepath: str):
                 yield parsed
             else:
                 print(f"Failed to parse: {line[:50]}...", file=sys.stderr)
-
+```
 | Line | What it does |
 |------|--------------|
 | with open(filepath, 'r') as f: | Opens file safely (auto-closes) |
@@ -644,14 +646,14 @@ Why yield? It streams logs instead of loading all into memory.
 
 ## 📘 CODE DEEP-DIVE: db.py
 
-python
+```python
 
 import sqlite3
 from datetime import datetime
 from typing import List, Dict
 
 DB_PATH = "logs.db"
-
+```
 | Line | What it does |
 |------|--------------|
 | import sqlite3 | SQLite database driver (built into Python) |
@@ -661,13 +663,13 @@ DB_PATH = "logs.db"
 
 ---
 
-python
+```python
 
 def get_connection():
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
-
+```
 | Line | What it does |
 |------|--------------|
 | sqlite3.connect(DB_PATH) | Creates/opens database |
@@ -676,7 +678,7 @@ def get_connection():
 
 ---
 
-python
+```python
 
 def create_table():
     conn = get_connection()
@@ -703,6 +705,7 @@ def create_table():
     
     conn.commit()
     conn.close()
+```
 
 | Component | What it does |
 |-----------|--------------|
@@ -717,7 +720,7 @@ def create_table():
 
 --- 
 
-python
+```python
 
 def insert_logs(logs: List[Dict]) -> int:
     conn = get_connection()
@@ -754,6 +757,7 @@ def insert_logs(logs: List[Dict]) -> int:
         print(f"⚠️ Skipped {skipped} duplicate log entries")
     
     return inserted
+```
 
 | Part | What it does |
 |------|--------------|
@@ -765,7 +769,7 @@ def insert_logs(logs: List[Dict]) -> int:
 
 --- 
 
-python
+```python
 
 def query_top_ips(limit: int = 5) -> List[Dict]:
     conn = get_connection()
@@ -780,7 +784,7 @@ def query_top_ips(limit: int = 5) -> List[Dict]:
     results = [dict(row) for row in cursor.fetchall()]
     conn.close()
     return results
-
+```
 | Part | What it does |
 |------|--------------|
 | GROUP BY ip |	Groups logs by IP address |
@@ -793,13 +797,13 @@ def query_top_ips(limit: int = 5) -> List[Dict]:
 ---
 
 ## 📘 CODE DEEP-DIVE: ingest.py
-python
+```python
 
 import sys
 import argparse
 from src.parser import read_logs
 from src.db import insert_logs, get_connection, create_table, query_top_ips, query_hourly_volume, query_error_rate
-
+```
 | Line | What it does |
 |------|--------------|
 | import sys |	For command-line arguments and system functions |
@@ -809,7 +813,7 @@ from src.db import insert_logs, get_connection, create_table, query_top_ips, que
 
 ---
 
-python
+```python
 
 def ingest_logs(filepath: str, verbose: bool = False, limit: int = None):
     create_table()
@@ -831,6 +835,7 @@ def ingest_logs(filepath: str, verbose: bool = False, limit: int = None):
     
     if verbose:
         print(f"✅ Inserted {rows} logs into database")
+```
 
 | Line | What it does |
 |------|--------------|
@@ -868,7 +873,7 @@ Examples:
 
 ---
 
-python
+```python
 
     parser.add_argument(
         'filepath',
@@ -895,7 +900,7 @@ python
         default=5,
         help='Number of results for query (default: 5)'
     )
-
+```
 | Argument | Type |	What it does |
 |----------|------|--------------|
 | filepath | Positional | The log file to process |
@@ -906,7 +911,7 @@ python
 
 ---
 
-python
+```python
 
     args = parser.parse_args()
     
@@ -931,7 +936,7 @@ python
             results = query_error_rate()
             for row in results[:args.num_results]:
                 print(f"  {row['url']}: {row['error_rate']}% errors ({row['error_count']}/{row['total_requests']})")
-
+```
 | Line | What it does |
 |------|--------------|
 | args = parser.parse_args() |	Parses command-line arguments |
@@ -942,23 +947,29 @@ python
 ---
 
 ## 📘 CODE DEEP-DIVE: visualize.py
-python
+```python
 
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 from src.db import get_connection
+```
 
-Library	Purpose
-matplotlib.pyplot	Core plotting library
-seaborn	Statistical visualizations (built on matplotlib)
-pandas	Data manipulation and SQL queries
-src.db	Database connection
-python
+| Library |	Purpose |
+|---------|---------|
+| matplotlib.pyplot	| Core plotting library |
+| seaborn |	Statistical visualizations (built on matplotlib) |
+| pandas | Data manipulation and SQL queries |
+| src.db | Database connection |
+
+---
+
+```python
 
 sns.set_style("whitegrid")
 plt.rcParams['figure.figsize'] = (12, 6)
 plt.rcParams['font.size'] = 10
+```
 
 | Line | What it does |
 |------|--------------|
@@ -968,7 +979,7 @@ plt.rcParams['font.size'] = 10
 
 ---
 
-python
+```python
 
 def fetch_hourly_data():
     conn = get_connection()
@@ -984,6 +995,7 @@ def fetch_hourly_data():
     conn.close()
     df['hour'] = pd.to_datetime(df['hour'])
     return df
+```
 
 | Part | What it does |
 |------|--------------|
@@ -995,7 +1007,7 @@ def fetch_hourly_data():
 
 --
 
-python
+```python
 
 def plot_hourly_volume(save_path='hourly_volume.png'):
     df = fetch_hourly_data()
@@ -1012,6 +1024,7 @@ def plot_hourly_volume(save_path='hourly_volume.png'):
         plt.savefig(save_path, dpi=150, bbox_inches='tight')
         print(f"✅ Saved hourly volume chart to {save_path}")
     plt.show()
+```
 
 | Line | What it does |
 |------|--------------|
@@ -1028,7 +1041,7 @@ def plot_hourly_volume(save_path='hourly_volume.png'):
 
 ---
 
-python
+```python
 
 def plot_status_distribution(save_path='status_distribution.png'):
     df = fetch_status_data()
@@ -1046,7 +1059,7 @@ def plot_status_distribution(save_path='status_distribution.png'):
     
     plt.figure(figsize=(10, 6))
     bars = plt.bar(df['status'].astype(str), df['count'], color=colors)
-    ...
+```
 
 | Part | What it does |
 |------|--------------|
