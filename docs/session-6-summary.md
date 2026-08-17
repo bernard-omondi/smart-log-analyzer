@@ -294,7 +294,7 @@ dependencies = [
 ### SECTION 3: [project.optional-dependencies] – DEV DEPENDENCIES
 
 ```toml
-**[project.optional-dependencies]**
+[project.optional-dependencies]
 dev = [
     "black>=23.0.0",
     "ruff>=0.1.0",
@@ -618,7 +618,6 @@ def parse_line(line: str):
 ---
 
 ```python
-
 def read_logs(filepath: str):
     with open(filepath, 'r') as f:
         for line in f:
@@ -648,7 +647,6 @@ Why yield? It streams logs instead of loading all into memory.
 ## 📘 CODE DEEP-DIVE: db.py
 
 ```python
-
 import sqlite3
 from datetime import datetime
 from typing import List, Dict
@@ -665,7 +663,6 @@ DB_PATH = "logs.db"
 ---
 
 ```python
-
 def get_connection():
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
@@ -798,6 +795,7 @@ def query_top_ips(limit: int = 5) -> List[Dict]:
 ---
 
 ## 📘 CODE DEEP-DIVE: ingest.py
+
 ```python
 
 import sys
