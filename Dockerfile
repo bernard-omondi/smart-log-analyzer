@@ -22,3 +22,7 @@ ENTRYPOINT ["python", "-m", "src.ingest"]
 
 # Default arguments (override with --help, --verbose, etc.)
 CMD ["--help"]
+
+# Change the ENTRYPOINT and CMD
+ENTRYPOINT ["uvicorn", "src.api:app"]
+CMD ["--host", "0.0.0.0", "--port", "10000"]
