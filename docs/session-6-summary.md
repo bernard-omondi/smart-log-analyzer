@@ -961,8 +961,9 @@ from src.db import get_connection
 | seaborn |	Statistical visualizations (built on matplotlib) |
 | pandas | Data manipulation and SQL queries |
 | src.db | Database connection |
-
 ---
+
+
 
 ```python
 

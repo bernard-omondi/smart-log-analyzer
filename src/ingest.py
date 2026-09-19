@@ -43,6 +43,7 @@ def ingest_logs(filepath: str, verbose: bool = False, limit: int = None):
     # Count total rows
     cursor.execute("SELECT COUNT(*) FROM logs")
     total = cursor.fetchone()[0]
+    cursor.execute("SELECT MIN(timestamp_utc) as first, MAX(timestamp_utc) as last FROM logs") 
     
     # Show date range
     cursor.execute("""
@@ -53,8 +54,7 @@ def ingest_logs(filepath: str, verbose: bool = False, limit: int = None):
     """)
     row = cursor.fetchone()
     first = row[0]
-    last = row[1]
-    
+    last = row[1] 
     conn.close()
     
     if verbose:
@@ -62,6 +62,9 @@ def ingest_logs(filepath: str, verbose: bool = False, limit: int = None):
         print(f"   Total logs: {total}")
         print(f"   Date range: {first} to {last}")
 
+    # Return Statement
+    return logs    
+	
 def main():
     """Command-line entry point."""
     parser = argparse.ArgumentParser(

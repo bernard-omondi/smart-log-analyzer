@@ -14,15 +14,9 @@ COPY pyproject.toml README.md ./
 COPY src/ ./src/
 COPY scripts/ ./scripts/
 
-# Install the package
-RUN pip install --no-cache-dir -e ".[dev]"
+# Install the package with longer timeout
+RUN pip install --no-cache-dir -e ".[dev]" --timeout 100
 
-# Set the default command (you can override this)
-ENTRYPOINT ["python", "-m", "src.ingest"]
-
-# Default arguments (override with --help, --verbose, etc.)
-CMD ["--help"]
-
-# Change the ENTRYPOINT and CMD
+# Run the FastAPI server
 ENTRYPOINT ["uvicorn", "src.api:app"]
 CMD ["--host", "0.0.0.0", "--port", "10000"]
