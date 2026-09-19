@@ -14,3 +14,12 @@ large_sample.log
 *.pdf
 *.svg
 visualizations/
+
+# macOS
+.DS_Store
+
+# Python build artifacts
+*.egg-info/
+build/
+dist/
+
