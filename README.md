@@ -9,9 +9,26 @@
 
 ---
 
-## 📸 Screenshot
+## 📸 Screenshots
+
+### Interactive Dashboard
 
 ![Smart Log Analyzer Dashboard](screenshots/dashboard.png)
+
+*The Streamlit dashboard displaying metrics, top IPs, and hourly volume.*
+
+### Live API Response
+
+![Live API Response](screenshots/api_response.png)
+
+*The deployed FastAPI backend responding with JSON.*
+
+### Cloud Deployment
+
+![Render Deployment](screenshots/render_deploy.png)
+
+*The service running successfully on Render.*
+
 
 ---
 
