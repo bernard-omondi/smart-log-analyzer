@@ -22,4 +22,4 @@ visualizations/
 *.egg-info/
 build/
 dist/
-
+!screenshots/*.png
