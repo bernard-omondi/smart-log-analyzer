@@ -21,10 +21,12 @@ Smart Log Analyzer ingests raw Apache/Nginx log files, extracts structured data 
 
 **The full pipeline:**
 
+```
 Raw Logs → Parser → Database → FastAPI → Dashboard
-↑ ↑ ↑ ↑
-Regex SQLite REST API Streamlit
-+TZ +Index +Pydantic +Charts
+             ↑         ↑         ↑          ↑
+          Regex     SQLite   REST API   Streamlit
+          +TZ       +Index   +Pydantic  +Charts
+```
 
 ---
 
@@ -44,33 +46,34 @@ Regex SQLite REST API Streamlit
 
 ## 🏗️ Architecture
 
+```
 ┌─────────────────────────────────────────────────────────────────┐
-│ USER INTERFACES │
-│ ┌────────────┐ ┌────────────┐ ┌────────────┐ │
-│ │ Streamlit │ │ REST API │ │ CLI │ │
-│ │ Dashboard │ │ (FastAPI) │ │ (argparse) │ │
-│ └─────┬──────┘ └─────┬──────┘ └─────┬──────┘ │
-│ │ │ │ │
-│ └───────────────┼────────────────┘ │
-│ │ │
-│ ▼ │
-│ ┌────────────────────────────────────────────┐ │
-│ │ src/ingest.py (Orchestrator) │ │
-│ └────────────┬───────────────────┬───────────┘ │
-│ │ │ │
-│ ▼ ▼ │
-│ ┌────────────────────┐ ┌────────────────────┐ │
-│ │ src/parser.py │ │ src/db.py │ │
-│ │ Regex + TZ │ │ SQLite + Index │ │
-│ └────────────────────┘ └─────────┬──────────┘ │
-│ │ │
-│ ▼ │
-│ ┌────────────────────┐ │
-│ │ logs.db │ │
-│ │ (SQLite) │ │
-│ └────────────────────┘ │
+│                        USER INTERFACES                          │
+│  ┌────────────┐  ┌────────────┐  ┌────────────┐                │
+│  │ Streamlit  │  │  REST API  │  │    CLI     │                │
+│  │ Dashboard  │  │ (FastAPI)  │  │ (argparse) │                │
+│  └─────┬──────┘  └─────┬──────┘  └─────┬──────┘                │
+│        │               │                │                       │
+│        └───────────────┼────────────────┘                       │
+│                        │                                        │
+│                        ▼                                        │
+│  ┌────────────────────────────────────────────┐                │
+│  │           src/ingest.py (Orchestrator)     │                │
+│  └────────────┬───────────────────┬───────────┘                │
+│               │                   │                             │
+│               ▼                   ▼                             │
+│  ┌────────────────────┐  ┌────────────────────┐                │
+│  │   src/parser.py    │  │    src/db.py       │                │
+│  │   Regex + TZ       │  │    SQLite + Index  │                │
+│  └────────────────────┘  └─────────┬──────────┘                │
+│                                    │                            │
+│                                    ▼                            │
+│                          ┌────────────────────┐                 │
+│                          │    logs.db         │                 │
+│                          │    (SQLite)        │                 │
+│                          └────────────────────┘                 │
 └─────────────────────────────────────────────────────────────────┘
-
+```
 ---
 
 ## 🛠️ Tech Stack
@@ -149,7 +152,8 @@ uvicorn src.api:app --reload
 
 # 6. In another terminal, start the dashboard
 streamlit run src/dashboard.py
-```
+
+
 Then visit:
 
     API: http://localhost:8000
@@ -158,6 +162,7 @@ Then visit:
 
 ## 📁 Project Structure
 
+```
 smart-log-analyzer/
 ├── src/
 │   ├── parser.py         # Log parsing with timezone handling
@@ -181,9 +186,10 @@ smart-log-analyzer/
 ├── pyproject.toml
 ├── README.md
 └── .gitignore
-
+```
 
 ## 🧪 Running Tests
+
 ```
 # Run unit tests
 pytest tests/ -v
@@ -191,6 +197,7 @@ pytest tests/ -v
 # Run with coverage
 pytest tests/ --cov=src
 ```
+
 ## 📚 Documentation
 
 Detailed development notes are in the docs/ directory:
