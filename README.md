@@ -152,13 +152,15 @@ uvicorn src.api:app --reload
 
 # 6. In another terminal, start the dashboard
 streamlit run src/dashboard.py
-
+```
 
 Then visit:
 
     API: http://localhost:8000
 
     Dashboard: http://localhost:8501
+
+
 
 ## 📁 Project Structure
 
@@ -187,6 +189,7 @@ smart-log-analyzer/
 ├── README.md
 └── .gitignore
 ```
+
 
 ## 🧪 Running Tests
 
