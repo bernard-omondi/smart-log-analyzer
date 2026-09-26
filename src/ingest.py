@@ -40,21 +40,16 @@ def ingest_logs(filepath: str, verbose: bool = False, limit: int = None):
     conn = get_connection()
     cursor = conn.cursor()
     
-    # Count total rows
-    cursor.execute("SELECT COUNT(*) FROM logs")
-    total = cursor.fetchone()[0]
-    cursor.execute("SELECT MIN(timestamp_utc) as first, MAX(timestamp_utc) as last FROM logs") 
-    
+    # count total rows
+    cursor.execute("SELECT COUNT(*) as total FROM logs")
+    total = cursor.fetchone()['total']
+
     # Show date range
-    cursor.execute("""
-        SELECT 
-            MIN(timestamp_utc) as first,
-            MAX(timestamp_utc) as last
-        FROM logs
-    """)
+    cursor.execute("SELECT MIN(timestamp_utc) as first_ts, MAX(timestamp_utc) as last_ts FROM logs")
     row = cursor.fetchone()
-    first = row[0]
-    last = row[1] 
+    first = row['first_ts']
+    last = row['last_ts']
+
     conn.close()
     
     if verbose:

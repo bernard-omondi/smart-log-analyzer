@@ -1,71 +1,103 @@
 import sqlite3
+import os
 from datetime import datetime
 from typing import List, Dict, Optional
 
+
+# --- Database selection ---
+DATABASE_URL = os.getenv("DATABASE_URL")
+USE_POSTGRES = DATABASE_URL is not None and DATABASE_URL.startswith("postgres")
+
+if USE_POSTGRES:
+    import psycopg2
+    from psycopg2.extras import RealDictCursor
 DB_PATH = "logs.db"
 
 def get_connection():
-    """Get a connection to the SQLite database."""
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row  # Allows accessing columns by name
-    return conn
+    if USE_POSTGRES:
+        return psycopg2.connect(DATABASE_URL, cursor_factory=RealDictCursor)
+    else:
+        conn = sqlite3.connect(DB_PATH)
+        conn.row_factory = sqlite3.Row
+        return conn     
 
 def create_table():
     """Create the logs table if it doesn't exist."""
     conn = get_connection()
     cursor = conn.cursor()
-    
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS logs (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            ip TEXT NOT NULL,
-            timestamp_utc DATETIME NOT NULL,
-            timestamp_local DATETIME NOT NULL,
-            timezone_offset TEXT NOT NULL,
-            method TEXT NOT NULL,
-            url TEXT NOT NULL,
-            status INTEGER NOT NULL,
-            size INTEGER,
-            UNIQUE(ip, timestamp_utc, method, url, status)  -- ← NEW: Prevents duplicates
-        )
-    """)
-    
-    # Create indexes for faster queries
+
+    if USE_POSTGRES:
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS logs (
+                id SERIAL PRIMARY KEY,
+                ip TEXT NOT NULL,
+                timestamp_utc TIMESTAMP NOT NULL,
+                timestamp_local TIMESTAMP NOT NULL,
+                timezone_offset TEXT NOT NULL,
+                method TEXT NOT NULL,
+                url TEXT NOT NULL,
+                status INTEGER NOT NULL,
+                size INTEGER,
+                UNIQUE(ip, timestamp_utc, method, url, status)
+            )
+        """)
+    else:
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS logs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                ip TEXT NOT NULL,
+                timestamp_utc DATETIME NOT NULL,
+                timestamp_local DATETIME NOT NULL,
+                timezone_offset TEXT NOT NULL,
+                method TEXT NOT NULL,
+                url TEXT NOT NULL,
+                status INTEGER NOT NULL,
+                size INTEGER,
+                UNIQUE(ip, timestamp_utc, method, url, status)
+            )
+        """)
+
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_ip ON logs(ip)")
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_timestamp ON logs(timestamp_utc)")
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_status ON logs(status)")
-    
+
     conn.commit()
     conn.close()
-    print("✅ Database and indexes created successfully.")
+
+    engine = "PostgreSQL" if USE_POSTGRES else "SQLite"
+    print(f"✅ Database and indexes created successfully ({engine}).")
+
 
 def insert_logs(logs: List[Dict]) -> int:
-    """
-    Insert multiple log entries into the database.
-    
-    Args:
-        logs: List of parsed log dictionaries
-    
-    Returns:
-        Number of rows inserted (not duplicates)
-    """
+    """Insert multiple log entries, skipping duplicates."""
     if not logs:
         return 0
-    
+
     conn = get_connection()
     cursor = conn.cursor()
-    
+
+    if USE_POSTGRES:
+        insert_sql = """
+            INSERT INTO logs (
+                ip, timestamp_utc, timestamp_local, timezone_offset,
+                method, url, status, size
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            ON CONFLICT DO NOTHING
+        """
+    else:
+        insert_sql = """
+            INSERT OR IGNORE INTO logs (
+                ip, timestamp_utc, timestamp_local, timezone_offset,
+                method, url, status, size
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """
+
     inserted = 0
     skipped = 0
-    
+
     for log in logs:
         try:
-            cursor.execute("""
-                INSERT OR IGNORE INTO logs (
-                    ip, timestamp_utc, timestamp_local, timezone_offset,
-                    method, url, status, size
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            """, (
+            cursor.execute(insert_sql, (
                 log['ip'],
                 log['timestamp_utc'].isoformat(),
                 log['timestamp_local'].isoformat(),
@@ -82,14 +114,15 @@ def insert_logs(logs: List[Dict]) -> int:
         except Exception as e:
             print(f"⚠️ Error inserting log: {e}")
             continue
-    
+
     conn.commit()
     conn.close()
-    
+
     if skipped > 0:
         print(f"⚠️ Skipped {skipped} duplicate log entries")
-    
+
     return inserted
+
 
 def query_top_ips(limit: int = 5) -> List[Dict]:
     """Get top IPs by request count."""
@@ -112,19 +145,30 @@ def query_hourly_volume() -> List[Dict]:
     """Get hourly request volume."""
     conn = get_connection()
     cursor = conn.cursor()
-    
-    cursor.execute("""
-        SELECT 
-            strftime('%Y-%m-%d %H:00:00', timestamp_utc) as hour,
-            COUNT(*) as request_count
-        FROM logs
-        GROUP BY hour
-        ORDER BY hour ASC
-    """)
-    
+
+    if USE_POSTGRES:
+        cursor.execute("""
+            SELECT
+                TO_CHAR(timestamp_utc, 'YYYY-MM-DD HH24:00:00') as hour,
+                COUNT(*) as request_count
+            FROM logs
+            GROUP BY hour
+            ORDER BY hour ASC
+        """)
+    else:
+        cursor.execute("""
+            SELECT
+                strftime('%Y-%m-%d %H:00:00', timestamp_utc) as hour,
+                COUNT(*) as request_count
+            FROM logs
+            GROUP BY hour
+            ORDER BY hour ASC
+        """)
+
     results = [dict(row) for row in cursor.fetchall()]
     conn.close()
     return results
+
 
 def query_error_rate() -> List[Dict]:
     """Get error rate (5xx) per endpoint."""
