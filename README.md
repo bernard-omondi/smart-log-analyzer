@@ -111,9 +111,9 @@ Raw Logs → Parser → Database → FastAPI → Dashboard
 
 ---
 
-````markdown
 ## 🌐 Live Demos
 
+```
 **Try the full application live — no installation required:**
 
 | Component | URL |
