@@ -113,7 +113,6 @@ Raw Logs → Parser → Database → FastAPI → Dashboard
 
 ## 🌐 Live Demos
 
-```
 **Try the full application live — no installation required:**
 
 | Component | URL |
@@ -127,7 +126,6 @@ Raw Logs → Parser → Database → FastAPI → Dashboard
 
 ## 🚀 Quick Start
 
-Option 1: Run with Docker (Recommended)
 
 ```
 # 1. Clone the repository
