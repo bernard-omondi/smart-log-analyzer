@@ -111,18 +111,19 @@ Raw Logs → Parser → Database → FastAPI → Dashboard
 
 ---
 
-## 🌐 Live Demo
+````markdown
+## 🌐 Live Demos
 
-- **API:** [`https://smart-log-analyzer-gl1x.onrender.com`](https://smart-log-analyzer-gl1x.onrender.com)
-- **API Docs:** [`https://smart-log-analyzer-gl1x.onrender.com/docs`](https://smart-log-analyzer-gl1x.onrender.com/docs)
+**Try the full application live — no installation required:**
 
-> ⚠️ **Note:** The free Render instance sleeps after 15 minutes of inactivity. The first request may take up to 60 seconds to wake up.
+| Component | URL |
+|-----------|-----|
+| 📊 **Interactive Dashboard** | [smart-log-analyzer-dashboard.streamlit.app](https://smart-log-analyzer-dashboard.streamlit.app) |
+| ⚡ **REST API** | [smart-log-analyzer-gl1x.onrender.com](https://smart-log-analyzer-gl1x.onrender.com) |
+| 📖 **API Documentation** | [smart-log-analyzer-gl1x.onrender.com/docs](https://smart-log-analyzer-gl1x.onrender.com/docs) |
 
-**Try it now:**
+> ⚠️ **Free tier notice:** Both services run on free tiers. If inactive for 15+ minutes, the first request may take 30–60 seconds to wake up.
 
-```
-curl https://smart-log-analyzer-gl1x.onrender.com/
-```
 
 ## 🚀 Quick Start
 
