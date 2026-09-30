@@ -8,7 +8,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # --- Configuration ---
-API_URL = "http://localhost:10000"  # Your FastAPI endpoint
+import os
+API_URL = os.getenv("API_URL", "http://localhost:10000")
 
 # --- Page Config ---
 st.set_page_config(page_title="Log Analyzer", layout="wide")
