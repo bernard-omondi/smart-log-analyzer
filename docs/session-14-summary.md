@@ -14,6 +14,7 @@
 
 ## The Architecture
 
+```
 USE_POSTGRES = DATABASE_URL is set and starts with "postgres"
 │
 ├─ True → psycopg2 → PostgreSQL (cloud/production)
@@ -27,7 +28,7 @@ USE_POSTGRES = DATABASE_URL is set and starts with "postgres"
 ├── ? placeholders
 ├── INSERT OR IGNORE
 └── strftime() for dates
-
+```
 
 ## The Bugs We Fought Through
 1. **`TabError`** — mix of tabs and spaces from pasting code → fixed with `expand -t 4`
