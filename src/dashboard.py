@@ -50,25 +50,79 @@ with st.sidebar:
 # --- Main Dashboard ---
 st.markdown("### 📈 Key Metrics")
 
-# Fetch Data
+# Add this too, near the top of your dashboard
+import socket
 try:
-    # 1. Top IPs
-    top_ips_res = requests.get(f"{API_URL}/top-ips?limit=5")
-    top_ips = top_ips_res.json().get("results", [])
-
-    # 2. Hourly Volume
-    hourly_res = requests.get(f"{API_URL}/hourly-volume")
-    hourly_data = hourly_res.json().get("results", [])
-
-    # 3. Error Rates (for metrics)
-    error_res = requests.get(f"{API_URL}/error-rates")
-    error_data = error_res.json().get("results", [])
-
+    ip = socket.gethostbyname("smart-log-analyzer-gl1x.onrender.com")
+    st.write(f"DEBUG - DNS resolved to: {ip}")
 except Exception as e:
+    st.write(f"DEBUG - DNS failed: {e}")
+
+def fetch_from_api(path, timeout=90):
+    """
+    Fetch data from the API with retry and parse-safety.
+    Handles Render cold starts and non-JSON responses gracefully.
+    """
+    import time
+    
+    for attempt in range(3):
+        try:
+            response = requests.get(f"{API_URL}{path}", timeout=timeout)
+                       
+            # TEMP DEBUG: Print what the API actually returned
+            st.write(f"DEBUG - Status: {response.status_code}")
+            st.write(f"DEBUG - Content-Type: {response.headers.get('Content-Type', 'NONE')}")
+            st.write(f"DEBUG - Body (first 500 chars):")
+            st.code(response.text[:500])
+ 
+            # Check if response is valid JSON
+            content_type = response.headers.get("Content-Type", "")
+            if "application/json" not in content_type:
+                # Not JSON — likely a cold-start HTML page from Render
+                if attempt < 2:
+                    time.sleep(10)  # Wait for API to wake up
+                    continue
+                else:
+                    return None
+            
+            if response.status_code == 200:
+                return response.json()
+            else:
+                if attempt < 2:
+                    time.sleep(5)
+                    continue
+                return None
+                
+        except (requests.exceptions.Timeout, requests.exceptions.ConnectionError):
+            if attempt < 2:
+                time.sleep(10)
+                continue
+            return None
+        except Exception:
+            return None
+    
+    return None
+
+
+# --- Fetch Data ---
+top_ips_data = fetch_from_api("/top-ips?limit=5")
+hourly_data_raw = fetch_from_api("/hourly-volume")
+error_data_raw = fetch_from_api("/error-rates")
+
+if top_ips_data is None or hourly_data_raw is None or error_data_raw is None:
     st.warning(
-        f"Could not connect to API. Make sure the container is running. Error: {e}"
+        "⚠️ **API is waking up.** Render's free tier sleeps after 15 minutes of "
+        "inactivity. This first request can take up to 60 seconds. "
+        "Please **refresh this page** in a moment to try again."
     )
-    top_ips, hourly_data, error_data = [], [], []
+    top_ips = []
+    hourly_data = []
+    error_data = []
+else:
+    top_ips = top_ips_data.get("results", [])
+    hourly_data = hourly_data_raw.get("results", [])
+    error_data = error_data_raw.get("results", [])
+
 
 # --- Display Metrics ---
 if top_ips or hourly_data:
