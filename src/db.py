@@ -191,7 +191,7 @@ def query_error_rate() -> List[Dict]:
             ROUND(100.0 * SUM(CASE WHEN status >= 500 THEN 1 ELSE 0 END) / COUNT(*), 2) as error_rate
         FROM logs
         GROUP BY url
-        HAVING error_count > 0
+        HAVING SUM(CASE WHEN status >= 500 THEN 1 ELSE 0 END) > 0 
         ORDER BY error_rate DESC
     """)
 
