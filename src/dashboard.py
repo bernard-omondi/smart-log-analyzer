@@ -18,20 +18,28 @@ st.title("📊 Smart Log Analyzer Dashboard")
 # --- Sidebar Actions ---
 with st.sidebar:
     st.header("⚙️ Controls")
-    if st.button("🔄 Ingest Sample Logs"):
-        with st.spinner("Ingesting logs..."):
-            try:
-                response = requests.post(f"{API_URL}/ingest", json={"filepath": "/app/data/sample.log"})
-                if response.status_code == 200:
-                    st.success("✅ Logs ingested successfully!")
-                else:
-                    st.error(f"❌ Error: {response.text}")
-            except Exception as e:
-                st.error(f"❌ Connection Error: {e}")
 
+
+    st.markdown("**Upload a log file:**")
+    uploaded_file = st.file_uploader("Choose a .log file", type=["log", "txt"])
+
+    if uploaded_file is not None:
+        if st.button("📤 Upload & Analyze"):
+            with st.spinner("Uploading and ingesting..."):
+                try:
+                    files = {"file": (uploaded_file.name, uploaded_file.getvalue(), "text/plain")}
+                    response = requests.post(f"{API_URL}/upload", files=files)
+                    if response.status_code == 200:
+                        st.success("✅ Logs ingested successfully!")
+                        st.rerun()
+                    else:
+                        st.error(f"❌ Error: {response.text}")
+                except Exception as e:
+                    st.error(f"❌ Connection Error: {e}")
     st.divider()
-    st.caption("Built with Streamlit & FastAPI")
-
+    st.caption("Built with Streamlit & FastAPI")    
+                
+                    
 # --- Main Dashboard ---
 st.markdown("### 📈 Key Metrics")
 

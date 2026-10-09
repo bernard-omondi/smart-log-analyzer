@@ -3,7 +3,8 @@ FastAPI web interface for smart-log-analyzer.
 """
 
 import os
-from fastapi import FastAPI, HTTPException
+import tempfile
+from fastapi import FastAPI, HTTPException, UploadFile, File
 from pydantic import BaseModel
 from src.ingest import ingest_logs
 from src.db import query_top_ips, query_hourly_volume, query_error_rate, create_table
@@ -67,6 +68,37 @@ async def ingest(request: IngestRequest):
         logs_inserted=len(logs),
         total_logs=total
     )
+
+@app.post("/upload", response_model=IngestResponse)
+async def upload_log(file: UploadFile = File(...)):
+    """Upload a log file and ingest it into the database."""
+    if not file.filename:
+        raise HTTPException(status_code=400, detail="No file provided")
+
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".log") as tmp:
+        contents = await file.read()
+        tmp.write(contents)
+        tmp_path = tmp.name
+
+    try:
+        logs = list(ingest_logs(tmp_path, verbose=False))
+
+        from src.db import get_connection
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT COUNT(*) as total FROM logs")
+        total = cursor.fetchone()['total']
+        conn.close()
+
+        return IngestResponse(
+            status="success",
+            logs_parsed=len(logs),
+            logs_inserted=len(logs),
+            total_logs=total
+       )
+
+    finally:
+        os.unlink(tmp_path)
 
 
 @app.get("/top-ips")

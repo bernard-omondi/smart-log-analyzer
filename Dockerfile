@@ -14,8 +14,8 @@ COPY pyproject.toml README.md ./
 COPY src/ ./src/
 COPY scripts/ ./scripts/
 
-# Install the package with longer timeout
-RUN pip install --no-cache-dir -e ".[dev]" --timeout 100
+# Install the package with extended timeout and retries
+RUN pip install --no-cache-dir --default-timeout=300 --retries 10 -e ".[dev]"
 
 # Run the FastAPI server
 ENTRYPOINT ["uvicorn", "src.api:app"]
