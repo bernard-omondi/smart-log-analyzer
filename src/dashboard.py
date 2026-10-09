@@ -1,6 +1,7 @@
 """
 Streamlit Dashboard for Smart Log Analyzer
 """
+
 import streamlit as st
 import requests
 import pandas as pd
@@ -9,6 +10,7 @@ import seaborn as sns
 
 # --- Configuration ---
 import os
+
 API_URL = os.getenv("API_URL", "http://localhost:10000")
 
 # --- Page Config ---
@@ -19,7 +21,6 @@ st.title("📊 Smart Log Analyzer Dashboard")
 with st.sidebar:
     st.header("⚙️ Controls")
 
-
     st.markdown("**Upload a log file:**")
     uploaded_file = st.file_uploader("Choose a .log file", type=["log", "txt"])
 
@@ -27,7 +28,13 @@ with st.sidebar:
         if st.button("📤 Upload & Analyze"):
             with st.spinner("Uploading and ingesting..."):
                 try:
-                    files = {"file": (uploaded_file.name, uploaded_file.getvalue(), "text/plain")}
+                    files = {
+                        "file": (
+                            uploaded_file.name,
+                            uploaded_file.getvalue(),
+                            "text/plain",
+                        )
+                    }
                     response = requests.post(f"{API_URL}/upload", files=files)
                     if response.status_code == 200:
                         st.success("✅ Logs ingested successfully!")
@@ -37,9 +44,9 @@ with st.sidebar:
                 except Exception as e:
                     st.error(f"❌ Connection Error: {e}")
     st.divider()
-    st.caption("Built with Streamlit & FastAPI")    
-                
-                    
+    st.caption("Built with Streamlit & FastAPI")
+
+
 # --- Main Dashboard ---
 st.markdown("### 📈 Key Metrics")
 
@@ -48,34 +55,42 @@ try:
     # 1. Top IPs
     top_ips_res = requests.get(f"{API_URL}/top-ips?limit=5")
     top_ips = top_ips_res.json().get("results", [])
-    
+
     # 2. Hourly Volume
     hourly_res = requests.get(f"{API_URL}/hourly-volume")
     hourly_data = hourly_res.json().get("results", [])
-    
+
     # 3. Error Rates (for metrics)
     error_res = requests.get(f"{API_URL}/error-rates")
     error_data = error_res.json().get("results", [])
 
 except Exception as e:
-    st.warning(f"Could not connect to API. Make sure the container is running. Error: {e}")
+    st.warning(
+        f"Could not connect to API. Make sure the container is running. Error: {e}"
+    )
     top_ips, hourly_data, error_data = [], [], []
 
 # --- Display Metrics ---
 if top_ips or hourly_data:
     col1, col2, col3 = st.columns(3)
-    
+
     # Total Logs (Roughly estimate from hourly data)
-    total_logs = sum([d.get("request_count", 0) for d in hourly_data]) if hourly_data else 0
+    total_logs = (
+        sum([d.get("request_count", 0) for d in hourly_data]) if hourly_data else 0
+    )
     col1.metric("📦 Total Logs", f"{total_logs:,}")
-    
+
     # Unique IPs
     unique_ips = len(top_ips) if top_ips else 0
     col2.metric("🌐 Unique IPs", unique_ips)
-    
+
     # Error Rate (Approx)
-    total_errors = sum([d.get("error_count", 0) for d in error_data]) if error_data else 0
-    total_requests = sum([d.get("total_requests", 0) for d in error_data]) if error_data else 1
+    total_errors = (
+        sum([d.get("error_count", 0) for d in error_data]) if error_data else 0
+    )
+    total_requests = (
+        sum([d.get("total_requests", 0) for d in error_data]) if error_data else 1
+    )
     error_rate = (total_errors / total_requests * 100) if total_requests > 0 else 0
     col3.metric("⚠️ Error Rate", f"{error_rate:.1f}%")
 else:
@@ -89,11 +104,18 @@ with col_chart1:
     st.subheader("📊 Top IPs")
     if top_ips:
         df_ips = pd.DataFrame(top_ips)
-        st.dataframe(df_ips, width='stretch')
-        
+        st.dataframe(df_ips, width="stretch")
+
         # Bar Chart
         fig, ax = plt.subplots()
-        sns.barplot(data=df_ips, x="ip", y="request_count", hue="ip", palette="viridis", legend=False)
+        sns.barplot(
+            data=df_ips,
+            x="ip",
+            y="request_count",
+            hue="ip",
+            palette="viridis",
+            legend=False,
+        )
         ax.set_xlabel("IP Address")
         ax.set_ylabel("Request Count")
         st.pyplot(fig)
@@ -105,10 +127,10 @@ with col_chart2:
     if hourly_data:
         df_hourly = pd.DataFrame(hourly_data)
         # Convert hour string to datetime for better plotting
-        df_hourly['hour'] = pd.to_datetime(df_hourly['hour'])
-        
+        df_hourly["hour"] = pd.to_datetime(df_hourly["hour"])
+
         fig, ax = plt.subplots(figsize=(10, 4))
-        ax.plot(df_hourly['hour'], df_hourly['request_count'], marker='o')
+        ax.plot(df_hourly["hour"], df_hourly["request_count"], marker="o")
         ax.set_xlabel("Time")
         ax.set_ylabel("Requests")
         plt.xticks(rotation=45)

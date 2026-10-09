@@ -12,7 +12,7 @@ from src.db import query_top_ips, query_hourly_volume, query_error_rate, create_
 app = FastAPI(
     title="Smart Log Analyzer API",
     description="API for ingesting and analyzing log files",
-    version="1.0.0"
+    version="1.0.0",
 )
 
 
@@ -43,19 +43,22 @@ async def root():
             "/ingest": "POST - Ingest a log file",
             "/top-ips": "GET - Show top IPs",
             "/hourly-volume": "GET - Show hourly volume",
-            "/error-rates": "GET - Show error rates"
-        }
+            "/error-rates": "GET - Show error rates",
+        },
     }
 
 
 @app.post("/ingest", response_model=IngestResponse)
 async def ingest(request: IngestRequest):
     if not os.path.exists(request.filepath):
-        raise HTTPException(status_code=404, detail=f"File not found: {request.filepath}")
+        raise HTTPException(
+            status_code=404, detail=f"File not found: {request.filepath}"
+        )
 
     logs = list(ingest_logs(request.filepath, verbose=False))
 
     from src.db import get_connection
+
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("SELECT COUNT(*) FROM logs")
@@ -66,8 +69,9 @@ async def ingest(request: IngestRequest):
         status="success",
         logs_parsed=len(logs),
         logs_inserted=len(logs),
-        total_logs=total
+        total_logs=total,
     )
+
 
 @app.post("/upload", response_model=IngestResponse)
 async def upload_log(file: UploadFile = File(...)):
@@ -84,18 +88,19 @@ async def upload_log(file: UploadFile = File(...)):
         logs = list(ingest_logs(tmp_path, verbose=False))
 
         from src.db import get_connection
+
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute("SELECT COUNT(*) as total FROM logs")
-        total = cursor.fetchone()['total']
+        total = cursor.fetchone()["total"]
         conn.close()
 
         return IngestResponse(
             status="success",
             logs_parsed=len(logs),
             logs_inserted=len(logs),
-            total_logs=total
-       )
+            total_logs=total,
+        )
 
     finally:
         os.unlink(tmp_path)

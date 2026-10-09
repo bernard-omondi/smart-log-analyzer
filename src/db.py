@@ -3,7 +3,6 @@ import os
 from datetime import datetime
 from typing import List, Dict, Optional
 
-
 # --- Database selection ---
 DATABASE_URL = os.getenv("DATABASE_URL")
 USE_POSTGRES = DATABASE_URL is not None and DATABASE_URL.startswith("postgres")
@@ -13,13 +12,15 @@ if USE_POSTGRES:
     from psycopg.rows import dict_row
 DB_PATH = "logs.db"
 
+
 def get_connection():
     if USE_POSTGRES:
         return psycopg.connect(DATABASE_URL, row_factory=dict_row)
     else:
         conn = sqlite3.connect(DB_PATH)
         conn.row_factory = sqlite3.Row
-        return conn     
+        return conn
+
 
 def create_table():
     """Create the logs table if it doesn't exist."""
@@ -97,16 +98,19 @@ def insert_logs(logs: List[Dict]) -> int:
 
     for log in logs:
         try:
-            cursor.execute(insert_sql, (
-                log['ip'],
-                log['timestamp_utc'].isoformat(),
-                log['timestamp_local'].isoformat(),
-                log['timezone_offset'],
-                log['method'],
-                log['url'],
-                log['status'],
-                log['size']
-            ))
+            cursor.execute(
+                insert_sql,
+                (
+                    log["ip"],
+                    log["timestamp_utc"].isoformat(),
+                    log["timestamp_local"].isoformat(),
+                    log["timezone_offset"],
+                    log["method"],
+                    log["url"],
+                    log["status"],
+                    log["size"],
+                ),
+            )
             if cursor.rowcount == 1:
                 inserted += 1
             else:
@@ -128,18 +132,22 @@ def query_top_ips(limit: int = 5) -> List[Dict]:
     """Get top IPs by request count."""
     conn = get_connection()
     cursor = conn.cursor()
-    
-    cursor.execute("""
+
+    cursor.execute(
+        """
         SELECT ip, COUNT(*) as request_count
         FROM logs
         GROUP BY ip
         ORDER BY request_count DESC
         LIMIT ?
-    """, (limit,))
-    
+    """,
+        (limit,),
+    )
+
     results = [dict(row) for row in cursor.fetchall()]
     conn.close()
     return results
+
 
 def query_hourly_volume() -> List[Dict]:
     """Get hourly request volume."""
@@ -174,7 +182,7 @@ def query_error_rate() -> List[Dict]:
     """Get error rate (5xx) per endpoint."""
     conn = get_connection()
     cursor = conn.cursor()
-    
+
     cursor.execute("""
         SELECT 
             url,
@@ -186,85 +194,89 @@ def query_error_rate() -> List[Dict]:
         HAVING error_count > 0
         ORDER BY error_rate DESC
     """)
-    
+
     results = [dict(row) for row in cursor.fetchall()]
     conn.close()
     return results
 
+
 def test_database():
     """Test the database functions with sample data."""
     create_table()
-    
+
     # Sample data (matching our logs)
     sample_logs = [
         {
-            'ip': '127.0.0.1',
-            'timestamp_utc': datetime(2000, 10, 10, 20, 55, 36),
-            'timestamp_local': datetime(2000, 10, 10, 13, 55, 36),
-            'timezone_offset': '-0700',
-            'method': 'GET',
-            'url': '/apache_pb.gif',
-            'status': 200,
-            'size': 2326
+            "ip": "127.0.0.1",
+            "timestamp_utc": datetime(2000, 10, 10, 20, 55, 36),
+            "timestamp_local": datetime(2000, 10, 10, 13, 55, 36),
+            "timezone_offset": "-0700",
+            "method": "GET",
+            "url": "/apache_pb.gif",
+            "status": 200,
+            "size": 2326,
         },
         {
-            'ip': '192.168.1.1',
-            'timestamp_utc': datetime(2021, 11, 20, 9, 12, 44),
-            'timestamp_local': datetime(2021, 11, 20, 9, 12, 44),
-            'timezone_offset': '+0000',
-            'method': 'POST',
-            'url': '/api/login',
-            'status': 401,
-            'size': 512
+            "ip": "192.168.1.1",
+            "timestamp_utc": datetime(2021, 11, 20, 9, 12, 44),
+            "timestamp_local": datetime(2021, 11, 20, 9, 12, 44),
+            "timezone_offset": "+0000",
+            "method": "POST",
+            "url": "/api/login",
+            "status": 401,
+            "size": 512,
         },
         {
-            'ip': '10.0.2',
-            'timestamp_utc': datetime(2021, 12, 31, 18, 30, 1),
-            'timestamp_local': datetime(2022, 1, 1, 0, 0, 1),
-            'timezone_offset': '+0530',
-            'method': 'GET',
-            'url': '/dashboard',
-            'status': 200,
-            'size': 4096
+            "ip": "10.0.2",
+            "timestamp_utc": datetime(2021, 12, 31, 18, 30, 1),
+            "timestamp_local": datetime(2022, 1, 1, 0, 0, 1),
+            "timezone_offset": "+0530",
+            "method": "GET",
+            "url": "/dashboard",
+            "status": 200,
+            "size": 4096,
         },
         {
-            'ip': '203.0.113.5',
-            'timestamp_utc': datetime(2023, 3, 16, 2, 15, 30),
-            'timestamp_local': datetime(2023, 3, 15, 22, 15, 30),
-            'timezone_offset': '-0400',
-            'method': 'DELETE',
-            'url': '/user/123',
-            'status': 403,
-            'size': 128
+            "ip": "203.0.113.5",
+            "timestamp_utc": datetime(2023, 3, 16, 2, 15, 30),
+            "timestamp_local": datetime(2023, 3, 15, 22, 15, 30),
+            "timezone_offset": "-0400",
+            "method": "DELETE",
+            "url": "/user/123",
+            "status": 403,
+            "size": 128,
         },
         {
-            'ip': '198.51.100.7',
-            'timestamp_utc': datetime(2024, 6, 30, 16, 30, 22),
-            'timestamp_local': datetime(2024, 6, 30, 18, 30, 22),
-            'timezone_offset': '+0200',
-            'method': 'GET',
-            'url': '/report.pdf',
-            'status': 404,
-            'size': None
-        }
+            "ip": "198.51.100.7",
+            "timestamp_utc": datetime(2024, 6, 30, 16, 30, 22),
+            "timestamp_local": datetime(2024, 6, 30, 18, 30, 22),
+            "timezone_offset": "+0200",
+            "method": "GET",
+            "url": "/report.pdf",
+            "status": 404,
+            "size": None,
+        },
     ]
-    
+
     # Insert sample logs
     rows = insert_logs(sample_logs)
     print(f"✅ Inserted {rows} logs into database")
-    
+
     # Run queries
     print("\n=== Top IPs ===")
     for row in query_top_ips():
         print(f"  {row['ip']}: {row['request_count']} requests")
-    
+
     print("\n=== Hourly Volume ===")
     for row in query_hourly_volume():
         print(f"  {row['hour']}: {row['request_count']} requests")
-    
+
     print("\n=== Error Rate per Endpoint ===")
     for row in query_error_rate():
-        print(f"  {row['url']}: {row['error_rate']}% errors ({row['error_count']}/{row['total_requests']})")
+        print(
+            f"  {row['url']}: {row['error_rate']}% errors ({row['error_count']}/{row['total_requests']})"
+        )
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     test_database()
