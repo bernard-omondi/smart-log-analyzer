@@ -1,3 +1,5 @@
+[![CI](https://github.com/bernard-omondi/smart-log-analyzer/actions/workflows/ci.yml/badge.svg)](https://github.com/bernard-omondi/smart-log-analyzer/actions/workflows/ci.yml)
+
 # 🚀 Smart Log Analyzer
 
 > A production-grade log processing pipeline that parses, stores, analyzes, and visualizes Apache-style logs — from raw files to a live cloud API.
