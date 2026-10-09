@@ -4,8 +4,9 @@ Generates charts from the database.
 """
 
 import matplotlib.pyplot as plt
-import seaborn as sns
 import pandas as pd
+import seaborn as sns
+
 from src.db import get_connection
 
 # Set style for professional-looking charts
@@ -19,7 +20,7 @@ def fetch_hourly_data():
     conn = get_connection()
     df = pd.read_sql_query(
         """
-        SELECT 
+        SELECT
             timestamp_utc,
             strftime('%Y-%m-%d %H:00:00', timestamp_utc) as hour,
             COUNT(*) as request_count
@@ -39,7 +40,7 @@ def fetch_status_data():
     conn = get_connection()
     df = pd.read_sql_query(
         """
-        SELECT 
+        SELECT
             status,
             COUNT(*) as count
         FROM logs
@@ -57,7 +58,7 @@ def fetch_top_ips(limit=10):
     conn = get_connection()
     df = pd.read_sql_query(
         """
-        SELECT 
+        SELECT
             ip,
             COUNT(*) as request_count
         FROM logs
@@ -194,7 +195,7 @@ def generate_all_charts():
         print(f"   🌐 Top IPs: {len(top_ips_df)} IPs shown")
 
         print("✅ All visualizations generated successfully!")
-        print(f"📁 Charts saved to: visualizations/")
+        print("📁 Charts saved to: visualizations/")
 
     except Exception as e:
         print(f"❌ Error generating visualizations: {e}")

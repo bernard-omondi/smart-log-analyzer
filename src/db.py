@@ -1,7 +1,7 @@
-import sqlite3
 import os
+import sqlite3
 from datetime import datetime
-from typing import List, Dict, Optional
+from typing import Dict, List
 
 # --- Database selection ---
 DATABASE_URL = os.getenv("DATABASE_URL")
@@ -184,7 +184,7 @@ def query_error_rate() -> List[Dict]:
     cursor = conn.cursor()
 
     cursor.execute("""
-        SELECT 
+        SELECT
             url,
             COUNT(*) as total_requests,
             SUM(CASE WHEN status >= 500 THEN 1 ELSE 0 END) as error_count,

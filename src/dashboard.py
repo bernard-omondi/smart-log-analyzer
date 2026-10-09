@@ -2,14 +2,14 @@
 Streamlit Dashboard for Smart Log Analyzer
 """
 
-import streamlit as st
-import requests
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-
 # --- Configuration ---
 import os
+
+import matplotlib.pyplot as plt
+import pandas as pd
+import requests
+import seaborn as sns
+import streamlit as st
 
 API_URL = os.getenv("API_URL", "http://localhost:10000")
 

@@ -1,6 +1,6 @@
 import re
-from datetime import datetime, timezone, timedelta
 import sys
+from datetime import datetime, timedelta, timezone
 
 # Apache combined log format
 LOG_PATTERN = re.compile(

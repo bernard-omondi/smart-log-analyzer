@@ -4,10 +4,12 @@ FastAPI web interface for smart-log-analyzer.
 
 import os
 import tempfile
-from fastapi import FastAPI, HTTPException, UploadFile, File
+
+from fastapi import FastAPI, File, HTTPException, UploadFile
 from pydantic import BaseModel
+
+from src.db import create_table, query_error_rate, query_hourly_volume, query_top_ips
 from src.ingest import ingest_logs
-from src.db import query_top_ips, query_hourly_volume, query_error_rate, create_table
 
 app = FastAPI(
     title="Smart Log Analyzer API",

@@ -1,17 +1,19 @@
-import sys
 import argparse
-from src.parser import read_logs
+import sys
+from typing import Optional
+
 from src.db import (
-    insert_logs,
-    get_connection,
     create_table,
-    query_top_ips,
-    query_hourly_volume,
+    get_connection,
+    insert_logs,
     query_error_rate,
+    query_hourly_volume,
+    query_top_ips,
 )
+from src.parser import read_logs
 
 
-def ingest_logs(filepath: str, verbose: bool = False, limit: int = None):
+def ingest_logs(filepath: str, verbose: bool = False, limit: Optional[int] = None):
     """
     Ingest a log file into the database.
 
@@ -63,7 +65,7 @@ def ingest_logs(filepath: str, verbose: bool = False, limit: int = None):
     conn.close()
 
     if verbose:
-        print(f"\n📊 Database Summary:")
+        print("\n📊 Database Summary:")
         print(f"   Total logs: {total}")
         print(f"   Date range: {first} to {last}")
 
