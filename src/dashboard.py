@@ -52,11 +52,13 @@ st.markdown("### 📈 Key Metrics")
 
 # Add this too, near the top of your dashboard
 import socket
+
 try:
     ip = socket.gethostbyname("smart-log-analyzer-gl1x.onrender.com")
     st.write(f"DEBUG - DNS resolved to: {ip}")
 except Exception as e:
     st.write(f"DEBUG - DNS failed: {e}")
+
 
 def fetch_from_api(path, timeout=90):
     """
@@ -64,17 +66,19 @@ def fetch_from_api(path, timeout=90):
     Handles Render cold starts and non-JSON responses gracefully.
     """
     import time
-    
+
     for attempt in range(3):
         try:
             response = requests.get(f"{API_URL}{path}", timeout=timeout)
-                       
+
             # TEMP DEBUG: Print what the API actually returned
             st.write(f"DEBUG - Status: {response.status_code}")
-            st.write(f"DEBUG - Content-Type: {response.headers.get('Content-Type', 'NONE')}")
+            st.write(
+                f"DEBUG - Content-Type: {response.headers.get('Content-Type', 'NONE')}"
+            )
             st.write(f"DEBUG - Body (first 500 chars):")
             st.code(response.text[:500])
- 
+
             # Check if response is valid JSON
             content_type = response.headers.get("Content-Type", "")
             if "application/json" not in content_type:
@@ -84,7 +88,7 @@ def fetch_from_api(path, timeout=90):
                     continue
                 else:
                     return None
-            
+
             if response.status_code == 200:
                 return response.json()
             else:
@@ -92,7 +96,7 @@ def fetch_from_api(path, timeout=90):
                     time.sleep(5)
                     continue
                 return None
-                
+
         except (requests.exceptions.Timeout, requests.exceptions.ConnectionError):
             if attempt < 2:
                 time.sleep(10)
@@ -100,7 +104,7 @@ def fetch_from_api(path, timeout=90):
             return None
         except Exception:
             return None
-    
+
     return None
 
 
