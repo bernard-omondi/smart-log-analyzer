@@ -42,12 +42,19 @@ async def root():
         "message": "Welcome to the Smart Log Analyzer API",
         "endpoints": {
             "/": "This help message",
-            "/ingest": "POST - Ingest a log file",
+            "/health": "health check",
+            "/ingest": "POST - Ingest a log file by path",
+            "/upload": "POST - Upload and ingest a log file",
             "/top-ips": "GET - Show top IPs",
             "/hourly-volume": "GET - Show hourly volume",
             "/error-rates": "GET - Show error rates",
         },
     }
+
+@app.get("/health")
+async def health():
+    """Lightweight health check for uptime monitors."""
+    return {"status": "ok"}
 
 
 @app.post("/ingest", response_model=IngestResponse)
