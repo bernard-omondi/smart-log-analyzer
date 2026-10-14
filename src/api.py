@@ -51,6 +51,7 @@ async def root():
         },
     }
 
+
 @app.get("/health")
 async def health():
     """Lightweight health check for uptime monitors."""
