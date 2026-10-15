@@ -1,13 +1,11 @@
-[![CI](https://github.com/bernard-omondi/smart-log-analyzer/actions/workflows/ci.yml/badge.svg)](https://github.com/bernard-omondi/smart-log-analyzer/actions/workflows/ci.yml)
-
 # 🚀 Smart Log Analyzer
-
-> A production-grade log processing pipeline that parses, stores, analyzes, and visualizes Apache-style logs — from raw files to a live cloud API.
 
 [![CI](https://github.com/bernard-omondi/smart-log-analyzer/actions/workflows/ci.yml/badge.svg)](https://github.com/bernard-omondi/smart-log-analyzer/actions/workflows/ci.yml)
 [![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/release/python-3110/)
 [![Docker](https://img.shields.io/badge/docker-ready-blue.svg)](https://www.docker.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+> A production-grade log processing pipeline that parses, stores, analyzes, and visualizes Apache-style logs — from raw files to a live cloud API.
 
 ---
 
@@ -208,16 +206,17 @@ smart-log-analyzer/
 └── .gitignore
 ```
 
+## 🧪 Testing
 
-## 🧪 Running Tests
+This project has **two test suites**, each with a specific purpose.
 
-```
-# Run unit tests
-pytest tests/ -v
+### 1. Parser Tests — `tests/test_parser.py`
 
-# Run with coverage
-pytest tests/ --cov=src
-```
+Unit tests for the log parser. Runs **anywhere** — no database required.
+
+```bash
+pytest tests/test_parser.py -v
+
 
 ## 📚 Documentation
 
