@@ -129,25 +129,23 @@ def insert_logs(logs: List[Dict]) -> int:
 
 
 def query_top_ips(limit: int = 5) -> List[Dict]:
-    """Get top IPs by request count."""
+    """Get the top IPs by request count."""
     conn = get_connection()
     cursor = conn.cursor()
-
+    placeholder = "%s" if USE_POSTGRES else "?"
     cursor.execute(
-        """
+        f"""
         SELECT ip, COUNT(*) as request_count
         FROM logs
         GROUP BY ip
         ORDER BY request_count DESC
-        LIMIT ?
-    """,
+        LIMIT {placeholder}
+        """,
         (limit,),
     )
-
     results = [dict(row) for row in cursor.fetchall()]
     conn.close()
     return results
-
 
 def query_hourly_volume() -> List[Dict]:
     """Get hourly request volume."""
