@@ -147,6 +147,7 @@ def query_top_ips(limit: int = 5) -> List[Dict]:
     conn.close()
     return results
 
+
 def query_hourly_volume() -> List[Dict]:
     """Get hourly request volume."""
     conn = get_connection()
