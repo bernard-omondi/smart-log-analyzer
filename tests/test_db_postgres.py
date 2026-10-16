@@ -28,8 +28,12 @@ How to run locally:
 """
 
 import os
+import sys
 
 import pytest
+
+# Add src to path so we can import our modules (same as test_parser.py)
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 # Skip all tests in this file if DATABASE_URL isn't PostgreSQL
 DATABASE_URL = os.getenv("DATABASE_URL", "")
@@ -44,7 +48,7 @@ pytestmark = pytest.mark.skipif(
 @pytest.fixture(scope="module")
 def db_ready():
     """Ensure the table exists before running any tests."""
-    from src.db import create_table
+    from db import create_table
 
     create_table()
     yield
@@ -56,7 +60,7 @@ def db_ready():
 
 def test_create_table_idempotent(db_ready):
     """create_table() can be called multiple times safely."""
-    from src.db import create_table
+    from db import create_table
 
     create_table()
     create_table()
@@ -68,7 +72,7 @@ def test_create_table_idempotent(db_ready):
 
 def test_query_top_ips_returns_list(db_ready):
     """query_top_ips returns a list (even if empty)."""
-    from src.db import query_top_ips
+    from db import query_top_ips
 
     result = query_top_ips(limit=5)
     assert isinstance(result, list)
@@ -76,7 +80,7 @@ def test_query_top_ips_returns_list(db_ready):
 
 def test_query_top_ips_respects_limit(db_ready):
     """query_top_ips respects the limit parameter."""
-    from src.db import query_top_ips
+    from db import query_top_ips
 
     result = query_top_ips(limit=2)
     assert len(result) <= 2
@@ -84,7 +88,7 @@ def test_query_top_ips_respects_limit(db_ready):
 
 def test_query_top_ips_with_zero_limit(db_ready):
     """query_top_ips handles limit=0 without crashing."""
-    from src.db import query_top_ips
+    from db import query_top_ips
 
     result = query_top_ips(limit=0)
     assert result == []
@@ -92,7 +96,7 @@ def test_query_top_ips_with_zero_limit(db_ready):
 
 def test_query_hourly_volume_returns_list(db_ready):
     """query_hourly_volume returns a list."""
-    from src.db import query_hourly_volume
+    from db import query_hourly_volume
 
     result = query_hourly_volume()
     assert isinstance(result, list)
@@ -104,7 +108,7 @@ def test_query_error_rate_returns_list(db_ready):
     This test specifically exercises the HAVING clause that broke in CI
     when it used an alias instead of an inline expression.
     """
-    from src.db import query_error_rate
+    from db import query_error_rate
 
     result = query_error_rate()
     assert isinstance(result, list)
@@ -115,7 +119,7 @@ def test_query_error_rate_returns_list(db_ready):
 
 def test_insert_logs_returns_int(db_ready):
     """insert_logs returns an integer (count of inserted rows)."""
-    from src.db import insert_logs
+    from db import insert_logs
 
     # Empty insert should return 0
     result = insert_logs([])
@@ -127,7 +131,7 @@ def test_insert_logs_skips_duplicates(db_ready):
     """insert_logs skips duplicates via ON CONFLICT DO NOTHING."""
     from datetime import datetime, timezone
 
-    from src.db import get_connection, insert_logs
+    from db import get_connection, insert_logs
 
     # Build a unique log entry
     log = {
@@ -186,7 +190,7 @@ def test_placeholder_syntax_is_correct(db_ready):
     This test catches the exact bug that broke production:
         'the query has 0 placeholders but 1 parameters were passed'
     """
-    from src.db import query_top_ips
+    from db import query_top_ips
 
     # If the placeholder is wrong, this will raise psycopg.ProgrammingError
     # If it's correct, it returns a list
@@ -200,7 +204,7 @@ def test_having_clause_works(db_ready):
     This test catches the 'HAVING error_count' bug — the alias-in-HAVING
     problem that SQLite allows but PostgreSQL forbids.
     """
-    from src.db import query_error_rate
+    from db import query_error_rate
 
     result = query_error_rate()
     assert isinstance(result, list)
@@ -212,7 +216,7 @@ def test_date_formatting_works(db_ready):
     SQLite uses strftime(); PostgreSQL uses TO_CHAR().
     If the wrong function is used, PostgreSQL raises an error.
     """
-    from src.db import query_hourly_volume
+    from db import query_hourly_volume
 
     result = query_hourly_volume()
     assert isinstance(result, list)
