@@ -99,16 +99,16 @@ Raw Logs → Parser → Database → FastAPI → Dashboard
 |-------|-----------|
 | **Language** | Python 3.11 |
 | **Parsing** | `re`, `datetime`, `zoneinfo` |
-| **Database** | SQLite (local) + PostgreSQL (production) |
+| **Database** | SQLite (local) + PostgreSQL (Neon Serverless) |
 | **DB Driver** | `psycopg[binary]` (v3) |
+| **Config** | 'python-dotenv' |
 | **API** | FastAPI + Uvicorn |
 | **CLI** | `argparse` |
 | **Visualization** | matplotlib, seaborn, pandas |
 | **Dashboard** | Streamlit |
 | **Container** | Docker |
 | **CI/CD** | GitHub Actions |
-| **Hosting** | Render |
-| **Uptime** | cron-job.org |
+| **Hosting** | Render (API) / Streamlit Cloud (Dashboard) |
 
 ---
 
@@ -117,13 +117,54 @@ Raw Logs → Parser → Database → FastAPI → Dashboard
 **Try the full application live — no installation required:**
 
 | Component | URL |
-|-----------|-----|
-| 📊 **Interactive Dashboard** | [smart-log-analyzer-dashboard.streamlit.app](https://smart-log-analyzer-dashboard.streamlit.app) |
-| ⚡ **REST API** | [smart-log-analyzer-gl1x.onrender.com](https://smart-log-analyzer-gl1x.onrender.com) |
-| 📖 **API Documentation** | [smart-log-analyzer-gl1x.onrender.com/docs](https://smart-log-analyzer-gl1x.onrender.com/docs) |
+| :--- | :--- |
+| ⚡ **REST API** | *(Add your Render URL here once deployed)* |
+| 📖 **API Documentation** | *(Add your Render URL here once deployed)*/docs |
+| 📊 **Interactive Dashboard** | *(Add your Streamlit URL here once deployed)* |
 
-> ⚠️ **Free tier notice:** Both services run on free tiers. If inactive for 15+ minutes, the first request may take 30–60 seconds to wake up.
+> ⚠️ **Free tier notice:** The API and Dashboard run on free tiers. If inactive for 15+ minutes, the first request may take 30–60 seconds to wake up.
 
+---
+
+## 🚀 Running Locally
+
+### Option 1: Run with Docker
+
+1. **Ensure you have the environment variables:**
+   Create a `.env.local` file in the root directory and add your Neon connection string:
+   `DATABASE_URL=postgresql://[user]:[password]@[neon-hostname]/[dbname]?sslmode=require`
+
+2. **Build the Docker image:**
+   ```bash
+   docker build -t smart-log-analyzer .
+
+## 🌐 Live Demos
+
+**Try the full application live — no installation required:**
+
+| Component | URL |
+| :--- | :--- |
+| ⚡ **REST API** | *(Add your Render URL here once deployed)* |
+| 📖 **API Documentation** | *(Add your Render URL here once deployed)*/docs |
+| 📊 **Interactive Dashboard** | *(Add your Streamlit URL here once deployed)* |
+
+> ⚠️ **Free tier notice:** The API and Dashboard run on free tiers. If inactive for 15+ minutes, the first request may take 30–60 seconds to wake up.
+
+---
+
+## 🚀 Running Locally
+
+### Option 1: Run with Docker
+
+1. **Ensure you have the environment variables:**
+Create a `.env.local` file in the root directory and add your Neon connection string:
+`DATABASE_URL=postgresql://[user]:[password]@[neon-hostname]/[dbname]?sslmode=require`
+
+2. **Build the Docker image:**
+```bash
+docker build -t smart-log-analyzer .
+
+---
 
 ## 🔌 API Endpoints
 
@@ -142,13 +183,15 @@ Raw Logs → Parser → Database → FastAPI → Dashboard
 
 ## 🚀 Quick Start
 
+### Option 1: run with Docker
 
 ```
-# 1. Clone the repository
-git clone https://github.com/bernard-omondi/smart-log-analyzer.git
-cd smart-log-analyzer
+# 1. **Ensure you have the environment variables:**
+Create a `.env.local` file in the root directory and add your Neon connection string:
+`DATABASE_URL=postgresql://[user]:[password]@[neon-hostname]/[dbname]?sslmode=require`
 
-# 2. Build the Docker image
+# 2. **Build the Docker image**
+```bash
 docker build -t smart-log-analyzer .
 
 # 3. Run the API
@@ -162,7 +205,7 @@ curl -X POST http://localhost:10000/ingest \
 # 5. Query the API
 curl http://localhost:10000/top-ips
 ```
-Option 2: Run Locally with Python
+### Option 2: Run Locally with Python
 
 ```
 # 1. Clone and enter the project

@@ -2,10 +2,16 @@ import os
 import sqlite3
 from datetime import datetime
 from typing import Dict, List
+from dotenv import load_dotenv
+
+# Load the environment variables from the NOn-generated file
+load_dotenv('.env.local')
 
 # --- Database selection ---
 DATABASE_URL = os.getenv("DATABASE_URL")
-USE_POSTGRES = DATABASE_URL is not None and DATABASE_URL.startswith("postgres")
+
+# Safely check if it's a Postgres URL (handles both "postgres://" and "postgresql:")
+USE_POSTGRES = DATABASE_URL is not None and DATABASE_URL.startswith(("postgres", "postgresql"))
 
 if USE_POSTGRES:
     import psycopg
