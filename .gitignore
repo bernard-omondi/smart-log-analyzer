@@ -27,3 +27,6 @@ dist/
 .neon
 node_modules/
 .env.local
+package.json
+package-lock.json
+neon.ts
