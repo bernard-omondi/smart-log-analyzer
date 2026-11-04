@@ -11,7 +11,7 @@ import requests
 import seaborn as sns
 import streamlit as st
 
-API_URL = os.getenv("API_URL", "http://localhost:10000")
+API_URL = os.getenv("API_URL", "https://smart-log-analyzer-api.onrender.com")
 
 # --- Page Config ---
 st.set_page_config(page_title="Log Analyzer", layout="wide")
