@@ -2,6 +2,7 @@ import os
 import sqlite3
 from datetime import datetime
 from typing import Dict, List
+
 from dotenv import load_dotenv
 
 # Load the environment variables from the NOn-generated file
