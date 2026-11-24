@@ -1,0 +1,9 @@
+streamlit
+fastapi
+uvicorn
+psycopg[binary]
+python-dotenv
+pandas
+matplotlib
+seaborn
+requests
