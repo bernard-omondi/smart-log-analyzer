@@ -5,13 +5,15 @@ from typing import Dict, List
 from dotenv import load_dotenv
 
 # Load the environment variables from the NOn-generated file
-load_dotenv('.env.local')
+load_dotenv(".env.local")
 
 # --- Database selection ---
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 # Safely check if it's a Postgres URL (handles both "postgres://" and "postgresql:")
-USE_POSTGRES = DATABASE_URL is not None and DATABASE_URL.startswith(("postgres", "postgresql"))
+USE_POSTGRES = DATABASE_URL is not None and DATABASE_URL.startswith(
+    ("postgres", "postgresql")
+)
 
 if USE_POSTGRES:
     import psycopg
