@@ -118,9 +118,9 @@ Raw Logs → Parser → Database → FastAPI → Dashboard
 
 | Component | URL |
 | :--- | :--- |
-| ⚡ **REST API** | *(Add your Render URL here once deployed)* |
-| 📖 **API Documentation** | *(Add your Render URL here once deployed)*/docs |
-| 📊 **Interactive Dashboard** | *(Add your Streamlit URL here once deployed)* |
+| ⚡ **REST API** | [https://smart-log-analyzer-api.onrender.com](https://smart-log-analyzer-api.onrender.com) |
+| 📖 **API Documentation** | [https://smart-log-analyzer-api.onrender.com/docs](https://smart-log-analyzer-api.onrender.com/docs) |
+| 📊 **Interactive Dashboard** | [https://smart-log-analyzer-dashboard.streamlit.app](https://smart-log-analyzer-dashboard.streamlit.app) |
 
 > ⚠️ **Free tier notice:** The API and Dashboard run on free tiers. If inactive for 15+ minutes, the first request may take 30–60 seconds to wake up.
 
