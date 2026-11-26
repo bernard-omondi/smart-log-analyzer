@@ -1,5 +1,13 @@
 # 🚀 Smart Log Analyzer
 
+> A production-grade log processing pipeline...
+
+### 🎥 [Watch the Video Walkthrough](https://www.loom.com/share/1ae2ecfce2944930a6271b1b6ca413ce)
+
+---
+
+# 🚀 Smart Log Analyzer
+
 [![CI](https://github.com/bernard-omondi/smart-log-analyzer/actions/workflows/ci.yml/badge.svg)](https://github.com/bernard-omondi/smart-log-analyzer/actions/workflows/ci.yml)
 [![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/release/python-3110/)
 [![Docker](https://img.shields.io/badge/docker-ready-blue.svg)](https://www.docker.com/)
