@@ -148,20 +148,6 @@ Raw Logs → Parser → Database → FastAPI → Dashboard
 
 ---
 
-## 🚀 Running Locally
-
-### Option 1: Run with Docker
-
-1. **Ensure you have the environment variables:**
-Create a `.env.local` file in the root directory and add your Neon connection string:
-`DATABASE_URL=postgresql://[user]:[password]@[neon-hostname]/[dbname]?sslmode=require`
-
-2. **Build the Docker image:**
-```bash
-docker build -t smart-log-analyzer .
-
----
-
 ## 🔌 API Endpoints
 
 | Method | Path | Purpose |
